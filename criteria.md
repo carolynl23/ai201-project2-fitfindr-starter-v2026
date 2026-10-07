@@ -25,9 +25,8 @@ Given a query that matches at least one listing, the agent completes all three
 tool calls and returns a fit card — in at least 4 of 5 tries.
 
 **Why this target:**
-<!-- Why 4 of 5 and not 5 of 5? Something about your search, probably —
-     "my search is a plain keyword match and some phrasings will miss" is a
-     real answer. -->
+I chose 4 of 5 because the search uses plain keyword matching, so an unusual
+but valid phrasing may miss even when the data contains a related listing.
 
 ---
 
@@ -37,8 +36,8 @@ Given a query that matches no listings, the agent stops before calling
 `suggest_outfit` and returns a message naming what to change — 5 of 5 tries.
 
 **Why this target:**
-<!-- Why is 5 of 5 reasonable here when criterion 1 isn't? What's different
-     about this path? -->
+I chose 5 of 5 because an empty result is an explicit deterministic branch,
+not a fuzzy relevance decision, and it must protect the model-backed tools.
 
 ---
 
@@ -54,9 +53,13 @@ Given a query that matches no listings, the agent stops before calling
      compares session["selected_item"] against what actually reached
      suggest_outfit is the shape you're after. -->
 
+For 5 of 5 matching runs, the listing ID in `session["selected_item"]` is
+identical to the listing ID received by `suggest_outfit`.
 
-
-**Why this target:**
+**Why this target:** The selected listing is the state that must cross the tool
+boundary, so checking its ID directly makes the handoff observable. I picked
+5 of 5 because this is deterministic session bookkeeping, not fuzzy keyword
+matching or model output.
 
 
 
@@ -75,9 +78,12 @@ Given a query that matches no listings, the agent stops before calling
      sentence? A card longer than a caption anyone would post? Any of those can
      be turned into a number. -->
 
+For 5 different listings, every returned fit card is 2–4 sentences and
+mentions the listing's title, price, and platform at least once.
 
-
-**Why this target:**
+**Why this target:** The wording can vary, but these required details make
+every variation useful and checkable. I chose 5 listings because that covers
+different categories without making model calls unnecessarily expensive.
 
 
 
@@ -92,9 +98,12 @@ Given a query that matches no listings, the agent stops before calling
      search respects a price ceiling — anything, as long as it names a number
      or an observable outcome. -->
 
+When the wardrobe is empty, `suggest_outfit` returns a non-empty general
+styling string for 5 of 5 selected listings and does not raise an exception.
 
-
-**Why this target:**
+**Why this target:** A new user with no wardrobe still needs useful advice, and
+this branch is fully under our control. I chose 5 of 5 because the behavior
+should not depend on which listing was selected.
 
 
 
