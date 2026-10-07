@@ -44,9 +44,11 @@ ran successfully and reported that the planning loop is not built yet.
 
 ## What This Does
 
-<!-- Three or four sentences: what a user asks for, and what they get back. -->
-
-
+FitFindr lets a user describe a thrift item they want, including optional size
+and price constraints. It searches the listing data, selects the best match,
+and asks the model to combine that item with pieces from the user's wardrobe.
+It then returns a short fit-card caption; if nothing matches, it stops early
+with suggestions for broadening the search instead of calling the later tools.
 
 ---
 
@@ -125,7 +127,10 @@ search stores an error and leaves the later fields as `None`.
 **One full query**
 
 ```
-$ python app.py ask '...'
+$ python app.py ask 'vintage graphic tee under $30'
+  Found:    Y2K Baby Tee — Butterfly Print — $18.0 on depop
+  Outfit:   **Outfit 1: Y2K Streetwear** ...
+  Fit card: Found this absolute gem of a Y2K Baby Tee ... for just $18!
 
 ```
 
@@ -168,15 +173,27 @@ starter cache is enabled; `config.py` has `CACHE_ENABLED = True` and
 
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I asked for the listing and wardrobe shapes to be
+  checked before defining the three tool contracts.
+- *What came back:* The review identified the concrete listing fields, the
+  empty wardrobe shape `{"items": []}`, and the need for `search_listings` to
+  return an empty list rather than `None`.
+- *What I changed:* I wrote typed inputs, specific listing-dict fields, and
+  explicit empty-case behavior into the Tool Inventory before implementing
+  the tools.
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* I asked for the tool and loop behavior to be checked
+  against the acceptance criteria, especially the empty-search branch and the
+  selected-item handoff.
+- *What came back:* The implementation review emphasized reading each result
+  back from the session and stopping before the model tools when search
+  returned no listings. It also exposed that a shell command using double
+  quotes stripped `$5` from the test query.
+- *What I changed:* I wired the session-based branch in `agent.py`, added a
+  user-actionable empty-search message, verified the selected listing ID at
+  the outfit-tool boundary, and reran the price test with safe single quotes.
 
 <!-- ═══════════════════════ UNIT 4 — THE TEST ═══════════════════════
 
