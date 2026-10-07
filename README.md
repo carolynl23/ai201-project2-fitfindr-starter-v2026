@@ -18,6 +18,11 @@
 >
 > **The rest of this file is your submission.** Fill it in as you go.
 
+## Milestone 1 Notes
+
+Three listing fields are `title`, `category`, and `price`. The starter query
+ran successfully and reported that the planning loop is not built yet.
+
 ---
 
 <!-- ─────────────────────────────────────────────────────────────────────────
