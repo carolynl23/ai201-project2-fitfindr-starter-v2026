@@ -132,19 +132,28 @@ $ python app.py ask '...'
 **The three tools, tested one at a time**
 
 ```
-$ python -c "from tools import search_listings; print(search_listings('graphic tee', max_price=30))"
+$ python -c "from tools import search_listings; r=search_listings('graphic tee', max_price=30); print([(x['id'], x['title']) for x in r[:3]])"
+[('lst_017', 'Mesh Long-Sleeve Top — Black'), ('lst_002', 'Y2K Baby Tee — Butterfly Print'), ('lst_033', 'Vintage Band Tee — Faded Grey')]
 
 ```
 
 ```
-$ python -c "from tools import suggest_outfit; ..."
+$ python -c "from tools import suggest_outfit; from utils.data_loader import get_empty_wardrobe, load_listings; print(suggest_outfit(load_listings()[0], get_empty_wardrobe()).splitlines()[0])"
+Here are two practical, versatile outfit ideas to style these classic vintage Levi’s 501s:
 
 ```
 
 ```
-$ python -c "from tools import create_fit_card; ..."
+$ python -c "from tools import create_fit_card; from utils.data_loader import load_listings; print(create_fit_card('black tee, baggy jeans, and sneakers', load_listings()[0]).split('.')[0] + '.')"
+Scored these dreamy Vintage Levi's 501 Jeans on Depop for just $38, and honestly, they fit like an absolute dream.
 
 ```
+
+The empty search returned `[]`, and an empty outfit returned
+`No outfit suggestion was provided, so a fit card cannot be created.` Running
+the same fit-card input three times produced identical wording because the
+starter cache is enabled; `config.py` has `CACHE_ENABLED = True` and
+`TEMPERATURE = 0.9`.
 
 ---
 
