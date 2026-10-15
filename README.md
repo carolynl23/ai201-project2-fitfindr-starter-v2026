@@ -215,18 +215,89 @@ starter cache is enabled; `config.py` has `CACHE_ENABLED = True` and
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+| 1. Matching query completes all three tools | 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 2. Impossible query stops before the second tool | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 3. Selected item state handoff | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 4. Fit card details for five different listings | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 5. Empty wardrobe returns general styling | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
 
 **Real output from one try**, pasted as text, naming the file and function
 that produced it:
 
-```
+Source: `results/run_2026-10-15_1514_before.md`, produced by
+`run_eval.py::main` calling `agent.py::run_agent`.
+
+**Criterion 1, matching query, Try 1**
 
 ```
+- stopped early: no
+- selected_item: Y2K Baby Tee — Butterfly Print ($18.0, depop)
+- search_results: 10
+
+Fit card:
+Found my ultimate Y2K throwback on Depop with this butterfly print baby tee for just $18! It gives off the dreamiest nostalgic streetwear energy when paired with baggy denim and chunky sneakers. Honestly obsessed with how effortless this piece makes the whole vibe.
+```
+
+**Criterion 2, impossible query, Try 1**
+
+```
+- stopped early: yes — No matching listings. Try broader description keywords, a different size, or a higher price limit.
+- selected_item: (none)
+- search_results: 0
+
+Trace:
+[1] search_listings (via MCP)
+      out: [] (empty)
+[2] search_results branch
+      →    empty, stopping
+```
+
+**Criterion 3, selected-item state, Try 1**
+
+```
+- selected_item: 90s Track Jacket — Navy/White Stripe ($45.0, poshmark)
+- search_results: 4
+
+Trace:
+[2] suggest_outfit
+      out: **Outfit 1: 90s Streetwear** * **Thrift Piece:** 90s Track Jacket ...
+```
+
+The selected listing remained the same listing handed to `suggest_outfit` in
+all five tries.
+
+**Criterion 4, five different listings, one try each**
+
+```
+Y2K Baby Tee — Butterfly Print ($18.0, depop):
+Can we talk about how good this $18 Y2K Baby Tee with the butterfly print is? I just scored it on depop and it’s giving the ultimate early 2000s street style. Paired with baggy jeans and chunky sneakers, it's the easiest casual fit ever.
+
+Denim Jacket — Light Wash, Cropped ($42.0, poshmark):
+Finally scored this cropped light wash denim jacket on Poshmark for just $42, and I'm obsessed with how versatile it is! I'm leaning heavily into that high-contrast double denim streetwear vibe today, pairing it with baggy dark wash jeans and a simple tank. It gives off such an effortless, cool-girl energy that I know I'll be wearing on repeat.
+
+Platform Sneakers — White Chunky Sole ($48.0, poshmark):
+Score! Snagged these Platform Sneakers on Poshmark for just $48, and they are officially my new daily drivers. I'm obsessed with how easily they can switch from a slouchy Y2K streetwear vibe to an effortless casual minimal look. Consider this your sign to check your favorite resale apps today!
+
+90s Silk Slip Dress — Floral, Midi Length ($30.0, depop):
+Channeling pure 90s model-off-duty energy by throwing an oversized crewneck and combat boots right over this floral midi. I scored this absolute dream on Depop for just $30, and honestly, the styling potential is endless. It’s the ultimate mix of effortless, grunge-girl romance and everyday cool.
+
+90s Track Jacket — Navy/White Stripe ($45.0, poshmark):
+Scored this vintage 90s Track Jacket on Poshmark for just $45, and I am obsessed. I’ve been living in it thrown over a ribbed tank and baggy denim for that effortless, off-duty streetwear vibe. It’s the ultimate throw-on-and-go layer for running errands or grabbing iced coffee.
+```
+
+**Criterion 5, empty wardrobe, Try 1**
+
+```
+- stopped early: no
+- selected_item: Denim Jacket — Light Wash, Cropped ($42.0, poshmark)
+- search_results: 7
+
+Outfit suggestion:
+Here are two practical, versatile ways to style this cropped light-wash denim jacket...
+```
+
+The full five-try output, including every outfit, fit card, and trace, is in
+`results/run_2026-10-15_1514_before.md`.
 
 ---
 
