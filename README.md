@@ -291,6 +291,12 @@ behaved differently afterwards. If the rewire didn't work, say exactly where it
 broke — the error text and the last thing that worked. That earns the point in
 full. -->
 
+Registered `search_listings` in `mcp_server.py` with typed `description`,
+`size`, and `max_price` inputs and rewired `agent.py::run_agent` to call it
+through `mcp_client.call_tool`. `python mcp_client.py` lists the tool with the
+expected schema. The end-to-end query `vintage graphic tee under $30` returned
+10 listings and produced a fit card, so the MCP call preserved the native list
+of listing dictionaries and the later planning steps still ran.
 
 
 ---
