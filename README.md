@@ -420,20 +420,44 @@ than a raw exception.
 
 **What I changed:**
 
+I changed the `create_fit_card` prompt in `tools.py::create_fit_card` to tell
+the model to include the listing's exact title verbatim, instead of only
+asking it to mention the title.
+
 **Which failure it was meant to fix:**
+
+This follows the criterion-4 diagnosis: the original five cards passed manual
+review, but the requirement was about the exact listing title. The prompt
+needed to make that contract explicit.
 
 ### Run Log — After
 
 | Criterion | Target | Try 1 | Try 2 | Try 3 | Try 4 | Try 5 | Verdict |
 |---|---|---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |  |  |
+| 1. Matching query completes all three tools | 4 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 2. Impossible query stops before the second tool | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 3. Selected item state handoff | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 4. Exact fit-card details for five different listings | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+| 5. Empty wardrobe returns general styling | 5 of 5 | PASS | PASS | PASS | PASS | PASS | MET (5/5) |
+
+The full after run is in
+`results/run_2026-10-15_1530_after.md`, produced by
+`run_eval.py::main` calling `agent.py::run_agent` and
+`tools.py::create_fit_card`.
 
 **Did it help, and how do I know:**
 
+Yes. The overall results stayed at 5/5 for every criterion, while the five
+criterion-4 listings now all included their exact titles verbatim in the
+returned cards. For example, the after run began the sneaker card with:
+
+```
+Scored these Platform Sneakers — White Chunky Sole on poshmark for just $48.0!
+```
+
+The change improved the specific title-contract weakness without changing the
+empty-search branch, state handoff, empty-wardrobe behavior, or full-run
+success rate.
 <!-- If it made things worse, say that. Honestly reported, that earns full
      credit and is more interesting than one that worked. -->
 
