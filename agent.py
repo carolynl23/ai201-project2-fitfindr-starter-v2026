@@ -154,20 +154,59 @@ def run_agent(query: str, wardrobe: dict) -> dict:
                 "max_price": session["parsed"]["max_price"],
             },
         )
+        trace.step(
+            "search_listings (via MCP)",
+            inputs=session["parsed"],
+            returned=session["search_results"],
+        )
         if not session["search_results"]:
             session["error"] = (
                 "No matching listings. Try broader description keywords, "
                 "a different size, or a higher price limit."
             )
+            trace.step(
+                "search_results branch",
+                inputs=session["search_results"],
+                returned=session["error"],
+                note="empty, stopping",
+            )
             return session
 
         session["selected_item"] = session["search_results"][0]
-        session["outfit_suggestion"] = suggest_outfit(
-            session["selected_item"], session["wardrobe"]
-        )
-        session["fit_card"] = create_fit_card(
-            session["outfit_suggestion"], session["selected_item"]
-        )
+        try:
+            session["outfit_suggestion"] = suggest_outfit(
+                session["selected_item"], session["wardrobe"]
+            )
+            trace.step(
+                "suggest_outfit",
+                inputs={
+                    "selected_item": session["selected_item"],
+                    "wardrobe": session["wardrobe"],
+                },
+                returned=session["outfit_suggestion"],
+            )
+
+            session["fit_card"] = create_fit_card(
+                session["outfit_suggestion"], session["selected_item"]
+            )
+            trace.step(
+                "create_fit_card",
+                inputs={
+                    "outfit": session["outfit_suggestion"],
+                    "selected_item": session["selected_item"],
+                },
+                returned=session["fit_card"],
+            )
+        except ModelUnavailable as exc:
+            session["error"] = (
+                "The outfit model could not be reached. Check your API key and "
+                "internet connection, then try the query again."
+            )
+            trace.step(
+                "model_unavailable",
+                returned=str(exc),
+                note="stopping before the remaining model step",
+            )
         return session
 
 

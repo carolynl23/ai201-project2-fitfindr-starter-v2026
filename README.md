@@ -277,12 +277,28 @@ that produced it:
 **Happy path**
 
 ```
+[1] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: 1 items: Platform Sneakers — White Chunky Sole
+[2] suggest_outfit
+      in:  dict with keys: selected_item, wardrobe
+      out: **Outfit 1: Y2K Streetwear** ...
+[3] create_fit_card
+      in:  dict with keys: outfit, selected_item
+      out: Score! Snagged these chunky Platform Sneakers on Poshmark ...
 
 ```
 
 **Empty search**
 
 ```
+[1] search_listings (via MCP)
+      in:  dict with keys: description, size, max_price
+      out: [] (empty)
+[2] search_results branch
+      in:  [] (empty)
+      out: No matching listings. Try broader description keywords, a different size, or a higher price limit.
+      →    empty, stopping
 
 ```
 
@@ -297,6 +313,22 @@ through `mcp_client.call_tool`. `python mcp_client.py` lists the tool with the
 expected schema. The end-to-end query `vintage graphic tee under $30` returned
 10 listings and produced a fit card, so the MCP call preserved the native list
 of listing dictionaries and the later planning steps still ran.
+
+
+## Milestone 2 Failure Messages
+
+I triggered each failure separately:
+
+- **Empty search** (`designer ballgown size XXS under $5`):
+  `No matching listings. Try broader description keywords, a different size, or a higher price limit.`
+- **Empty wardrobe** (`platform sneakers size 8 --empty-wardrobe`):
+  The agent returned general styling advice and a fit card; it did not crash or return an empty outfit.
+- **Model unavailable** (simulated invalid API key on an uncached query):
+  `The outfit model could not be reached. Check your API key and internet connection, then try the query again.`
+
+The model-unavailable handler records the failure in `session["error"]` and
+stops before the remaining model-backed step, so the CLI shows guidance rather
+than a raw exception.
 
 
 ---
