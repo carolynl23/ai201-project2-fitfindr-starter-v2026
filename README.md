@@ -195,6 +195,17 @@ starter cache is enabled; `config.py` has `CACHE_ENABLED = True` and
   user-actionable empty-search message, verified the selected listing ID at
   the outfit-tool boundary, and reran the price test with safe single quotes.
 
+**Moment 3**
+
+- *What I asked for:* I asked for the five-try before/after results to be
+  checked against the exact fit-card contract, not just whether a card existed.
+- *What came back:* The evaluation passed all five criteria, but the review
+  identified a remaining ambiguity: the model was asked to mention the title,
+  without being told to preserve the exact listing title.
+- *What I changed:* I updated `tools.py::create_fit_card` to request the exact
+  title verbatim, reran the full five-try evaluation with caching disabled, and
+  confirmed that all five criterion-4 listings included their exact titles.
+
 <!-- ═══════════════════════ UNIT 4 — THE TEST ═══════════════════════
 
      Don't fill these in during unit 3.
@@ -471,6 +482,17 @@ success rate.
      you did. "I ran out of time" is fine if it's true. Pretending nothing is
      left is not. -->
 
+No criterion is currently missed: all five criteria met their targets in both
+the before and after five-try evaluations. The remaining limitation is not a
+failed criterion but an untested production edge case: the model-unavailable
+handler was validated with a simulated `ModelUnavailable` exception rather
+than a live invalid-key request, because changing the shared API key could
+affect other work in this environment. If I continued, I would run that live
+uncached failure test with a temporary invalid key, restore the key immediately,
+and verify the same actionable message.
+
+The submission URL is unchanged from the previous unit:
+https://github.com/carolynl23/ai201-project2-fitfindr-starter-v2026
 
 
 <!-- ═════════════════════════════════════════════════════════════════════
